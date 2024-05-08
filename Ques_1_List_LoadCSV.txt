@@ -1,0 +1,41 @@
+# Import necessary libraries
+import pandas as pd
+
+# Load the wine dataset (replace 'wine.csv' with your dataset file)
+wine_data = pd.read_csv('wine.csv')
+
+# 1. Handling missing values
+# Replace missing values with the mean of the respective column
+wine_data.fillna(wine_data.mean(), inplace=True)
+
+# 2. Handling outliers
+# Define a function to detect outliers using z-score
+def detect_outliers(df, features):
+    outlier_indices = []
+    for col in features:
+        Q1 = df[col].quantile(0.25)
+        Q3 = df[col].quantile(0.75)
+        IQR = Q3 - Q1
+        lower_bound = Q1 - 1.5 * IQR
+        upper_bound = Q3 + 1.5 * IQR
+        outlier_index = df[(df[col] < lower_bound) | (df[col] > upper_bound)].index
+        outlier_indices.extend(outlier_index)
+    return list(set(outlier_indices))
+
+outlier_indices = detect_outliers(wine_data, wine_data.columns)
+# Remove outliers
+wine_data.drop(outlier_indices, inplace=True)
+
+# 3. Handling inconsistent values (if applicable)
+# For example, converting categorical values to lowercase
+wine_data['variety'] = wine_data['variety'].str.lower()
+
+# Validation rules (example)
+# Validate alcohol content should be between 8 and 15
+valid_alcohol_content = wine_data[(wine_data['alcohol'] >= 8) & (wine_data['alcohol'] <= 15)]
+
+# Display cleaned dataset
+print("Cleaned Wine Dataset:\n", wine_data.head())
+
+# Display validation results
+print("Validation Results - Alcohol Content:\n", valid_alcohol_content.head())

@@ -1,0 +1,38 @@
+import pandas as pd
+from sklearn.datasets import load_iris
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
+import numpy as np
+
+# Load the Iris dataset
+iris = load_iris()
+iris_df = pd.DataFrame(iris.data, columns=iris.feature_names)
+
+# Standardization
+scaler = StandardScaler()
+iris_standardized = scaler.fit_transform(iris_df)
+iris_standardized_df = pd.DataFrame(iris_standardized, columns=iris.feature_names)
+print("Standardized data:\n", iris_standardized_df.head())
+
+# Transformation
+iris_log_transformed = np.log(iris_df)
+print("\nLog-transformed data:\n", iris_log_transformed.head())
+
+# Normalization
+scaler = MinMaxScaler()
+iris_normalized = scaler.fit_transform(iris_df)
+iris_normalized_df = pd.DataFrame(iris_normalized, columns=iris.feature_names)
+print("\nNormalized data:\n", iris_normalized_df.head())
+
+# Aggregation
+iris_mean = iris_df.mean()
+print("\nMean of each feature:\n", iris_mean)
+
+# Binarization
+threshold = 3.0
+petal_length_binarized = (iris_df['petal length (cm)'] > threshold).astype(int)
+print("\nBinarized petal length:\n", petal_length_binarized)
+
+# Sampling
+sampled_indices = iris_df.sample(frac=0.1).index
+iris_sampled = iris_df.loc[sampled_indices]
+print("\nSampled data (10%):\n", iris_sampled)
